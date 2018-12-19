@@ -18,7 +18,17 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   HomePresenter _mHomePresenter = HomePresenter();
   bool _mIsLoading = true;
-  List<Tab> _mTabs = List<Tab>();
+  List<Tab> _mTabs = <Tab>[
+    Tab(
+      text: 'App',
+    ),
+    Tab(
+      text: 'Android',
+    ),
+    Tab(
+      text: 'iOS',
+    ),
+  ];
   TabController _mTabController;
   Map<String, dynamic> _mContents = Map<String, dynamic>();
 
@@ -26,6 +36,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     print("initState");
+    _mTabController = TabController(vsync: this, length: _mTabs.length);
     _fetchToady();
   }
 
@@ -57,15 +68,9 @@ class _HomePageState extends State<HomePage>
   Future<Null> _fetchToady() async {
     await _mHomePresenter.fetchToday().then((today) {
       setState(() {
-        today.category.forEach((item) {
-          _mTabs.add(Tab(
-            text: item,
-          ));
-        });
         _mContents["App"] = today.app;
         _mContents["Android"] = today.android;
         _mContents["iOS"] = today.ios;
-        _mTabController = TabController(vsync: this, length: _mTabs.length);
         _mIsLoading = false;
       });
     }).catchError((error) {
@@ -110,17 +115,6 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget _buildAppBarBottom() {
-    if (!_mIsLoading) {
-      return TabBar(
-        tabs: _mTabs,
-        isScrollable: true,
-        controller: _mTabController,
-      );
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,7 +136,10 @@ class _HomePageState extends State<HomePage>
       ),
       appBar: AppBar(
         title: Text(widget.title),
-        bottom: _buildAppBarBottom(),
+        bottom: TabBar(
+          tabs: _mTabs,
+          controller: _mTabController,
+        ),
       ),
       body: _buildBody(),
     );

@@ -20,6 +20,38 @@ class _AppFragmentState extends State<AppFragment> {
 
   _AppFragmentState(this._mAppList, this._mRefreshCallback);
 
+  Widget _buildGridView(index) {
+    List<String> images = _mAppList[index].images;
+    if (images != null && images.isNotEmpty) {
+      return GridView.count(
+        primary: false,
+        shrinkWrap: true,
+        crossAxisCount: 3,
+        mainAxisSpacing: 8.0,
+        crossAxisSpacing: 8.0,
+        children: images
+            .map((item) => InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return ImagePreviewPage(images, index);
+                      }),
+                    );
+                  },
+                  child: Image.network(
+                    item,
+                    width: MediaQuery.of(context).size.width / 3.6,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                ))
+            .toList(),
+      );
+    }
+    return Container();
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -45,37 +77,11 @@ class _AppFragmentState extends State<AppFragment> {
                       ),
                     ),
                   ),
-                  GridView.count(
-                    primary: false,
-                    shrinkWrap: true,
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 8.0,
-                    crossAxisSpacing: 8.0,
-                    children: _mAppList[index]
-                        .images
-                        .map((item) => InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) {
-                                    return ImagePreviewPage(
-                                        _mAppList[index].images, index);
-                                  }),
-                                );
-                              },
-                              child: Image.network(
-                                item,
-                                width: MediaQuery.of(context).size.width / 3.6,
-                                height: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            ))
-                        .toList(),
-                  ),
+                  _buildGridView(index),
                   Container(
                     margin: const EdgeInsets.only(top: 12.0),
                     child: Text(_mAppList[index].createdAt.substring(0, 10)),
-                  )
+                  ),
                 ],
               ),
             ),
