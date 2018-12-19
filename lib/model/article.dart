@@ -1,13 +1,13 @@
-class App {
+class Article {
   String desc;
   List<String> images = List<String>();
   String createdAt;
   String url;
 
-  App(this.desc, this.images, this.createdAt, this.url);
+  Article(this.desc, this.images, this.createdAt, this.url);
 
-  factory App.fromJson(Map<String, dynamic> json) {
-    return App(
+  factory Article.fromJson(Map<String, dynamic> json) {
+    return Article(
         json["desc"],
         (json["images"] != null)
             ? (json["images"] as List).map((item) => (item as String)).toList()

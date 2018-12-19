@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../fragment/app_fragment.dart';
+import '../fragment/article_fragment.dart';
 import '../presenter/home_presenter.dart';
-import '../model/app.dart';
+import '../model/article.dart';
 
 class HomePage extends StatefulWidget {
-  final String title;
+  final String _mTitle;
 
-  HomePage({Key key, this.title}) : super(key: key);
+  HomePage(this._mTitle);
 
   @override
   State<StatefulWidget> createState() {
@@ -100,10 +100,11 @@ class _HomePageState extends State<HomePage>
       );
     }
     List<Widget> tabViews = _mTabs.map((Tab tab) {
-      List<App> appList = (_mContents[tab.text] as List);
-      if (appList != null && appList.isNotEmpty) {
-        return AppFragment(
-            appList.map((dynamic item) => (item as App)).toList(), _fetchToady);
+      List<Article> articleList = (_mContents[tab.text] as List);
+      if (articleList != null && articleList.isNotEmpty) {
+        return ArticleFragment(
+            articleList.map((dynamic item) => (item as Article)).toList(),
+            _fetchToady);
       }
       return Center(
         child: Text("empty"),
@@ -135,7 +136,7 @@ class _HomePageState extends State<HomePage>
         ),
       ),
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget._mTitle),
         bottom: TabBar(
           tabs: _mTabs,
           controller: _mTabController,

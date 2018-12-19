@@ -1,10 +1,10 @@
-import '../model/app.dart';
+import '../model/article.dart';
 
 class Today {
   List<String> category = List<String>();
-  List<App> app = List<App>();
-  List<App> android = List<App>();
-  List<App> ios = List<App>();
+  List<Article> app = List<Article>();
+  List<Article> android = List<Article>();
+  List<Article> ios = List<Article>();
 
   Today(this.category, this.app, this.android, this.ios);
 
@@ -14,17 +14,17 @@ class Today {
       (json["category"] as List).map((item) => (item as String)).toList(),
       (results["App"] != null)
           ? (results["App"] as List)
-              .map((dynamic item) => App.fromJson(item))
+              .map((dynamic item) => Article.fromJson(item))
               .toList()
           : null,
       (results["Android"] != null)
           ? (results["Android"] as List)
-              .map((dynamic item) => App.fromJson(item))
+              .map((dynamic item) => Article.fromJson(item))
               .toList()
           : null,
       (results["iOS"] != null)
           ? (results["iOS"] as List)
-              .map((dynamic item) => App.fromJson(item))
+              .map((dynamic item) => Article.fromJson(item))
               .toList()
           : null,
     );
