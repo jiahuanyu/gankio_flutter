@@ -67,14 +67,17 @@ class _HomePageState extends State<HomePage>
 
   Future<Null> _fetchToady() async {
     await _mHomePresenter.fetchToday().then((today) {
+      print(today);
       setState(() {
         _mContents["App"] = today.app;
         _mContents["Android"] = today.android;
         _mContents["iOS"] = today.ios;
-        _mIsLoading = false;
       });
     }).catchError((error) {
       print(error);
+    });
+    setState(() {
+      _mIsLoading = false;
     });
     return null;
   }
@@ -131,7 +134,7 @@ class _HomePageState extends State<HomePage>
               ),
             ),
             _buildDrawerItem("每日干货", Icons.today),
-            _buildDrawerItem("历史干货", Icons.history),
+            // _buildDrawerItem("历史干货", Icons.history),
           ],
         ),
       ),

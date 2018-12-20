@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../model/article.dart';
 import '../pages/image_preview_page.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../pages/article_detail_page.dart';
 
 class ArticleFragment extends StatefulWidget {
   final List<Article> _mAppList;
@@ -29,15 +31,17 @@ class _ArticleFragmentState extends State<ArticleFragment> {
               }),
             );
           },
-          child: Image.network(
-            images[i],
+          child: CachedNetworkImage(
+            imageUrl: images[i],
             width: MediaQuery.of(context).size.width / 3.6,
             height: 100,
             fit: BoxFit.cover,
+            placeholder: Container(
+              color: Colors.grey,
+            ),
           ),
         ));
       }
-
       return GridView.count(
         primary: false,
         shrinkWrap: true,
@@ -58,30 +62,38 @@ class _ArticleFragmentState extends State<ArticleFragment> {
         physics: AlwaysScrollableScrollPhysics(),
         itemCount: widget._mAppList.length,
         itemBuilder: (context, index) {
-          return Card(
-            child: Container(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 5.0),
-                    child: Text(
-                      widget._mAppList[index].desc,
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 18,
+          return InkWell(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return ArticleDetailPage(
+                    widget._mAppList[index].desc, widget._mAppList[index].url);
+              }));
+            },
+            child: Card(
+              child: Container(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 5.0),
+                      child: Text(
+                        widget._mAppList[index].desc,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
                       ),
                     ),
-                  ),
-                  _buildImageDisplay(index),
-                  Container(
-                    margin: const EdgeInsets.only(top: 12.0),
-                    child: Text(
-                        widget._mAppList[index].createdAt.substring(0, 10)),
-                  ),
-                ],
+                    _buildImageDisplay(index),
+                    Container(
+                      margin: const EdgeInsets.only(top: 12.0),
+                      child: Text(
+                          widget._mAppList[index].createdAt.substring(0, 10)),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

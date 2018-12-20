@@ -11,7 +11,9 @@ class Today {
   factory Today.fromJson(Map<String, dynamic> json) {
     Map<String, dynamic> results = json["results"];
     return Today(
-      (json["category"] as List).map((item) => (item as String)).toList(),
+      (json["category"] as List != null)
+          ? (json["category"] as List).map((item) => (item as String)).toList()
+          : null,
       (results["App"] != null)
           ? (results["App"] as List)
               .map((dynamic item) => Article.fromJson(item))

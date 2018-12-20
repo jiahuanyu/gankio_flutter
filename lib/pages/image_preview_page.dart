@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ImagePreviewPage extends StatefulWidget {
   final List<String> _mImageList;
@@ -8,16 +9,11 @@ class ImagePreviewPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _ImagePreviewPage(_mImageList, _mCurrentIndex);
+    return _ImagePreviewPage();
   }
 }
 
 class _ImagePreviewPage extends State<ImagePreviewPage> {
-  final List<String> _mImageList;
-  final int _mCurrentIndex;
-
-  _ImagePreviewPage(this._mImageList, this._mCurrentIndex);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,11 +24,11 @@ class _ImagePreviewPage extends State<ImagePreviewPage> {
         onPageChanged: (index) {
           print("page = $index");
         },
-        controller: PageController(initialPage: _mCurrentIndex),
-        itemCount: _mImageList.length,
+        controller: PageController(initialPage: widget._mCurrentIndex),
+        itemCount: widget._mImageList.length,
         itemBuilder: (BuildContext context, int index) {
-          return Image.network(
-            _mImageList[index],
+          return CachedNetworkImage(
+            imageUrl: widget._mImageList[index],
             fit: BoxFit.contain,
           );
         },
