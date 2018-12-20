@@ -1,14 +1,15 @@
-import 'package:flutter/material.dart';
-import '../model/article.dart';
-import '../pages/image_preview_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+
+import '../api/api.dart' as Api;
+import '../model/article.dart';
 import '../pages/article_detail_page.dart';
+import '../pages/image_preview_page.dart';
 
 class ArticleFragment extends StatefulWidget {
-  final List<Article> _mAppList;
-  final RefreshCallback _mRefreshCallback;
+  final String _mLabel;
 
-  ArticleFragment(this._mAppList, this._mRefreshCallback);
+  ArticleFragment(this._mLabel);
 
   @override
   State<StatefulWidget> createState() {
@@ -16,9 +17,32 @@ class ArticleFragment extends StatefulWidget {
   }
 }
 
-class _ArticleFragmentState extends State<ArticleFragment> {
+class _ArticleFragmentState extends State<ArticleFragment> with AutomaticKeepAliveClientMixin {
+  bool _mIsLoading = true;
+  List<Article> _mArticleList;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<Null> _fetchData() async {
+    await Api.fetchData(widget._mLabel).then((data) {
+      setState(() {
+        _mArticleList = data;
+      });
+    }).catchError((error) {
+      print(error);
+    });
+    setState(() {
+      _mIsLoading = false;
+    });
+    return null;
+  }
+
   Widget _buildImageDisplay(index) {
-    List<String> images = widget._mAppList[index].images;
+    List<String> images = _mArticleList[index].images;
     if (images != null && images.isNotEmpty) {
       List<Widget> gridViewChildren = new List<Widget>();
       for (int i = 0; i < images.length; i++) {
@@ -38,6 +62,9 @@ class _ArticleFragmentState extends State<ArticleFragment> {
             fit: BoxFit.cover,
             placeholder: Container(
               color: Colors.grey,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
           ),
         ));
@@ -56,17 +83,26 @@ class _ArticleFragmentState extends State<ArticleFragment> {
 
   @override
   Widget build(BuildContext context) {
+    if (_mIsLoading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    } else if (_mArticleList == null || _mArticleList.isEmpty) {
+      return Center(
+        child: Text("empty"),
+      );
+    }
     return RefreshIndicator(
-      onRefresh: widget._mRefreshCallback,
+      onRefresh: _fetchData,
       child: ListView.builder(
         physics: AlwaysScrollableScrollPhysics(),
-        itemCount: widget._mAppList.length,
+        itemCount: _mArticleList.length,
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
                 return ArticleDetailPage(
-                    widget._mAppList[index].desc, widget._mAppList[index].url);
+                    _mArticleList[index].desc, _mArticleList[index].url);
               }));
             },
             child: Card(
@@ -78,7 +114,7 @@ class _ArticleFragmentState extends State<ArticleFragment> {
                     Container(
                       margin: const EdgeInsets.only(bottom: 5.0),
                       child: Text(
-                        widget._mAppList[index].desc,
+                        _mArticleList[index].desc,
                         softWrap: true,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -89,8 +125,8 @@ class _ArticleFragmentState extends State<ArticleFragment> {
                     _buildImageDisplay(index),
                     Container(
                       margin: const EdgeInsets.only(top: 12.0),
-                      child: Text(
-                          widget._mAppList[index].createdAt.substring(0, 10)),
+                      child:
+                          Text(_mArticleList[index].createdAt.substring(0, 10)),
                     ),
                   ],
                 ),
@@ -101,4 +137,7 @@ class _ArticleFragmentState extends State<ArticleFragment> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
