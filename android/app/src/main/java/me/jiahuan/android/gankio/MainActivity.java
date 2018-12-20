@@ -1,4 +1,4 @@
-package com.example.gankioflutter;
+package me.jiahuan.android.gankio;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
