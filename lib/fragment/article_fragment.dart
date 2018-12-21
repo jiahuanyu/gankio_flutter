@@ -21,7 +21,6 @@ class _ArticleFragmentState extends State<ArticleFragment>
     with AutomaticKeepAliveClientMixin {
   int _mCurrentPageIndex = 0;
   bool _mIsLoading = true;
-  bool _mHasMore = true;
   List<Article> _mArticleList = List<Article>();
   ScrollController _mScrollController = ScrollController();
 
@@ -29,7 +28,8 @@ class _ArticleFragmentState extends State<ArticleFragment>
   void initState() {
     super.initState();
     _mScrollController.addListener(() {
-      if (_mScrollController.position.pixels >= _mScrollController.position.maxScrollExtent) {
+      if (_mScrollController.position.pixels >=
+          _mScrollController.position.maxScrollExtent) {
         _fetchMore();
       }
     });
@@ -49,19 +49,12 @@ class _ArticleFragmentState extends State<ArticleFragment>
 
   Future<Null> _onRefresh() async {
     _mCurrentPageIndex = 0;
-    _mHasMore = true;
     return _fetchData();
   }
 
   Future<Null> _fetchData() async {
-    if (!_mHasMore) {
-      return null;
-    }
     await Api.fetchData(widget._mLabel, _mCurrentPageIndex + 1).then((data) {
       if (data != null) {
-        if (data.isEmpty) {
-          _mHasMore = false;
-        }
         setState(() {
           if (_mCurrentPageIndex == 0) {
             _mArticleList.clear();
