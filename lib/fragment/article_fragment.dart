@@ -29,8 +29,7 @@ class _ArticleFragmentState extends State<ArticleFragment>
   void initState() {
     super.initState();
     _mScrollController.addListener(() {
-      if (_mScrollController.position.pixels >=
-          _mScrollController.position.maxScrollExtent - 500) {
+      if (_mScrollController.position.pixels >= _mScrollController.position.maxScrollExtent) {
         _fetchMore();
       }
     });
