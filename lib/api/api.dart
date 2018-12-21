@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 
 import '../model/article.dart';
 
-const API_APP_URL = "https://gank.io/api/data/App/10/1";
-const API_ANDROID_URL = "https://gank.io/api/data/Android/10/1";
-const API_IOS_URL = "https://gank.io/api/data/iOS/10/1";
+const API_APP_URL = "https://gank.io/api/data/App/20/";
+const API_ANDROID_URL = "https://gank.io/api/data/Android/20/";
+const API_IOS_URL = "https://gank.io/api/data/iOS/20/";
 
 const Map<String, String> API_URL_MAP = {
   "App": API_APP_URL,
@@ -14,9 +14,9 @@ const Map<String, String> API_URL_MAP = {
   "iOS": API_IOS_URL
 };
 
-Future<List<Article>> fetchData(String label) async {
+Future<List<Article>> fetchData(String label, int pageIndex) async {
   // await Future.delayed((new Duration(seconds: 5)));
-  final response = await http.get(API_URL_MAP[label]);
+  final response = await http.get("${API_URL_MAP[label]}$pageIndex");
   List<Article> ret;
   if (response.statusCode == 200) {
     final data = json.decode(response.body);

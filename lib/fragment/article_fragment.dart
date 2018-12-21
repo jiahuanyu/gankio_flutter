@@ -17,26 +17,62 @@ class ArticleFragment extends StatefulWidget {
   }
 }
 
-class _ArticleFragmentState extends State<ArticleFragment> with AutomaticKeepAliveClientMixin {
+class _ArticleFragmentState extends State<ArticleFragment>
+    with AutomaticKeepAliveClientMixin {
+  int _mCurrentPageIndex = 0;
   bool _mIsLoading = true;
-  List<Article> _mArticleList;
+  bool _mHasMore = true;
+  List<Article> _mArticleList = List<Article>();
+  ScrollController _mScrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    _mScrollController.addListener(() {
+      if (_mScrollController.position.pixels >=
+          _mScrollController.position.maxScrollExtent - 500) {
+        _fetchMore();
+      }
+    });
+    _fetchFirst();
+  }
+
+  void _fetchFirst() async {
+    await _fetchData();
+    setState(() {
+      _mIsLoading = false;
+    });
+  }
+
+  void _fetchMore() async {
+    await _fetchData();
+  }
+
+  Future<Null> _onRefresh() async {
+    _mCurrentPageIndex = 0;
+    _mHasMore = true;
+    return _fetchData();
   }
 
   Future<Null> _fetchData() async {
-    await Api.fetchData(widget._mLabel).then((data) {
-      setState(() {
-        _mArticleList = data;
-      });
+    if (!_mHasMore) {
+      return null;
+    }
+    await Api.fetchData(widget._mLabel, _mCurrentPageIndex + 1).then((data) {
+      if (data != null) {
+        if (data.isEmpty) {
+          _mHasMore = false;
+        }
+        setState(() {
+          if (_mCurrentPageIndex == 0) {
+            _mArticleList.clear();
+          }
+          _mArticleList.addAll(data);
+        });
+        _mCurrentPageIndex++;
+      }
     }).catchError((error) {
       print(error);
-    });
-    setState(() {
-      _mIsLoading = false;
     });
     return null;
   }
@@ -93,9 +129,10 @@ class _ArticleFragmentState extends State<ArticleFragment> with AutomaticKeepAli
       );
     }
     return RefreshIndicator(
-      onRefresh: _fetchData,
+      onRefresh: _onRefresh,
       child: ListView.builder(
         physics: AlwaysScrollableScrollPhysics(),
+        controller: _mScrollController,
         itemCount: _mArticleList.length,
         itemBuilder: (context, index) {
           return InkWell(

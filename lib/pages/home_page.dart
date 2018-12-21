@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../fragment/read_fragment.dart';
 import '../fragment/today_fragment.dart';
 
 class HomePage extends StatefulWidget {
-  final String _mTitle;
-
-  HomePage(this._mTitle);
+  HomePage();
 
   @override
   State<StatefulWidget> createState() {
@@ -15,14 +14,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TodayFragment _mTodayFragment = TodayFragment();
-
-  Widget _mBody;
-
+  ReadFragment _mReadFragment = ReadFragment();
+  String _mTitle = "干货";
+  int _mCurrentSelectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _mBody = _mTodayFragment;
   }
 
   Widget _buildDrawerItem(
@@ -52,9 +50,18 @@ class _HomePageState extends State<HomePage> {
           ),
           _buildDrawerItem("干货", Icons.today, () {
             Navigator.pop(context);
-            _mBody = _mTodayFragment;
+            setState(() {
+              _mTitle = "干货";
+              _mCurrentSelectedIndex = 0;
+            });
           }),
-          _buildDrawerItem("闲读", Icons.chrome_reader_mode, null),
+          _buildDrawerItem("闲读", Icons.chrome_reader_mode, () {
+            Navigator.pop(context);
+            setState(() {
+              _mTitle = "阅读";
+              _mCurrentSelectedIndex = 1;
+            });
+          }),
           // _buildDrawerItem("历史干货", Icons.history),
         ],
       ),
@@ -67,9 +74,20 @@ class _HomePageState extends State<HomePage> {
       drawer: _buildDrawer(),
       appBar: AppBar(
         primary: true,
-        title: Text(widget._mTitle),
+        title: Text(_mTitle),
       ),
-      body: _mBody,
+      body: Stack(
+        children: <Widget>[
+          new Offstage(
+            offstage: _mCurrentSelectedIndex != 0,
+            child: _mTodayFragment,
+          ),
+          new Offstage(
+            offstage: _mCurrentSelectedIndex != 1,
+            child: _mReadFragment,
+          ),
+        ],
+      ),
     );
   }
 }
