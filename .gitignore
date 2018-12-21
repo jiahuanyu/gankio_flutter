@@ -36,7 +36,6 @@ build/
 **/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
-**/android/key.properties
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
@@ -71,5 +70,3 @@ build/
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
-## Key
-**/key.jks
