@@ -15,4 +15,7 @@ For help getting started with Flutter, view our
 [online documentation](https://flutter.io/docs), which offers tutorials, 
 samples, guidance on mobile development, and a full API reference.
 
-![](https://ws2.sinaimg.cn/large/006tNbRwly1fyc92c2jkbj30u01qcaib.jpg)
+<img
+    src="https://ws2.sinaimg.cn/large/006tNbRwly1fyc92c2jkbj30u01qcaib.jpg"
+    width="33%"
+    height="auto" />
